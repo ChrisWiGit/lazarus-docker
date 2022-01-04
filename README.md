@@ -62,7 +62,7 @@ lazbuildw64 myproject.lpr && mkdir -p /build/win64/ && mv myproject.exe /build/w
 You can add packages that are used by your project in the following way. Third party packages need to be downloaded first.
 
 > Packages of the Lazarus Online Package Manager can be downloaded from <https://packages.lazarus-ide.org>
-> You do not need to call `lazbuild --build-ide=` becasue the IDE is not used.
+> You do not need to call `lazbuild --build-ide=` because the IDE is not used.
 
 ```sh
 # Third party
