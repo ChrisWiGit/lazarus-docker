@@ -1,0 +1,13 @@
+{
+  "name": "build",
+  "version": "1.0.0",
+  "description": "Simple script library to easily execute. Run 'yarn make' to build Docker file. 'yarn it' to run the docker image and spawn shell terminal.",
+  "main": "index.js",
+  "scripts": {
+    "make": "docker build . -t lazarus-base",
+    "it": "docker run -it lazarus-base /bin/bash"
+  },
+  "author": "Christian Wimmer",
+  "license": "MIT",
+  "website": "https://github.com/ChrisWiGit/lazarus-docker"
+}
