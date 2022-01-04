@@ -57,6 +57,16 @@ lazbuildw32 myproject.lpr && mkdir -p /build/win32/ && mv myproject.exe /build/w
 lazbuildw64 myproject.lpr && mkdir -p /build/win64/ && mv myproject.exe /build/win64/
 ```
 
+### Access build directory
+
+You can run your image, compile your project and receive all your built files with this chain of commands:
+
+```sh
+rm -rf ./dest_build
+docker run --name <your_docker_conainer_name> <your_image>
+docker cp <your_docker_conainer_name>:/build ./dest_build && docker container rm <your_docker_conainer_name>
+```
+
 ## Adding packages
 
 You can add packages that are used by your project in the following way. Third party packages need to be downloaded first.
