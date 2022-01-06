@@ -98,8 +98,8 @@ RUN wget https://packages.lazarus-ide.org/LNet.zip && unzip LNet.zip && rm LNet.
 
 # make some aliases: lazbuildl64 for linux, lazbuildw32 for win32 and lazbuildw64 for win64
 RUN echo "$LAZARUSDIR/lazbuild --os=linux --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR \$*" > /usr/bin/lazbuildl64 && \
-     echo "$LAZARUSDIR/lazbuild --os=win32 --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR \$*" > /usr/bin/lazbuildw32 && \
-     echo "$LAZARUSDIR/lazbuild --os=win64 --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR \$*" > /usr/bin/lazbuildw64 && \
+     echo "$LAZARUSDIR/lazbuild --os=win32 --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcross386 --widgetset=win32 \$*" > /usr/bin/lazbuildw32 && \
+     echo "$LAZARUSDIR/lazbuild --os=win64 --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcrossx64 --widgetset=win32 \$*" > /usr/bin/lazbuildw64 && \
      chmod 777 /usr/bin/lazbuild*
 
 # CLEANUP
