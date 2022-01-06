@@ -57,11 +57,11 @@ RUN mkdir $FPCDIR/units && \
      ln -sf $FPCDIR/x86_64-win64/lib/fpc/$FPC_FULLVERSION/units/x86_64-win64 $FPCDIR/units/x86_64-win64 && \
      ln -sf $FPCDIR/i386-win32/lib/fpc/$FPC_FULLVERSION/units/i386-win32 $FPCDIR/units/i386-win32
 
-# Create bin folder and copy all binary files of FPC into their specific platform folders /fpc/bin/[i386-win32 | x86_64-linux | x86_64-win64]
+# Create bin folder and link all binary files of FPC into their specific platform folders /fpc/bin/[i386-win32 | x86_64-linux | x86_64-win64]
 # Also create links of the binaries to /usr/bin/
 RUN mkdir $FPCDIR/bin && \
      mkdir $FPCDIR/bin/x86_64-linux && \
-          cp -R $FPCDIR/x86_64-linux/bin/* $FPCDIR/bin/x86_64-linux/ && \ 
+          ln -sf $FPCDIR/x86_64-linux/bin/* $FPCDIR/bin/x86_64-linux/ && \ 
           ln -sf $FPCDIR/x86_64-linux/lib/fpc/$FPC_FULLVERSION/ppcx64 $FPCDIR/bin/x86_64-linux/ppcx64 && \
                ln -sf $FPCDIR/bin/x86_64-linux/ppcx64 /usr/bin/ppcx64 && \
                ln -sf $FPCDIR/bin/x86_64-linux/fpc /usr/bin/fpc && \ 
