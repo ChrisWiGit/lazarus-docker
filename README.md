@@ -11,7 +11,9 @@ This docker file build FreePascal and Lazarus from their sources. Freepascal 3.2
 
 ## Building the image
 
-You can use the following commands to build the image
+You can use one of the following commands to build the image:
+
+> A package.json is provided for npm or yarn for your convenience
 
 ```sh
 docker build . -t lazarus-base
