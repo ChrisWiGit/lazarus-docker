@@ -7,7 +7,7 @@ This docker file build FreePascal and Lazarus from their sources. Freepascal 3.2
 * FreePascal 3.2.2
 * Lazarus main branch
 
-> The dockerfile is not available from dockerhub!
+> The dockerfile is available from <https://hub.docker.com/repository/docker/wimmercg/lazarus-docker>
 
 ## Building the image
 
@@ -34,7 +34,7 @@ npm run it
 ## Using the image
 
 ```dockerfile
-FROM lazarus-base
+FROM wimmercg/lazarus-docker:1.0.3
 RUN mkdir /build
 RUN mkdir /project && git clone https://example.com/project
 COPY runenv.sh /runenv.sh
