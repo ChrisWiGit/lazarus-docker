@@ -11,10 +11,13 @@ ENV FPC_FULLVERSION=3.2.2
 ENV LAZARUSDIR=/lazarus
 ENV FPCDIR=/fpc
 
+ARG FPC_GIT_TAG=release_3_2_2
+ARG FPC_BOOTSTRAP=http://downloads.sourceforge.net/project/lazarus/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.2RC2/fpc-laz_3.2.2-210709_amd64.deb
+ARG LAZARUS_BRANCH=main
 # Install misc tools for development
 RUN apt-get update && \ 
      apt-get install -y wget binutils gcc unzip git \
-          # opengl 
+          # used for opengl lazopenglcontext
           libgl1-mesa-dev libgtk2.0-0 libgtk2.0-dev 
           # \
           # for docker image development
@@ -27,15 +30,15 @@ RUN apt-get update && \
 # Error: Illegal parameter: -WG
 # This bug may hit when compiling lazarus IDE.
 RUN mkdir $FPCDIR && \
-     git clone https://github.com/fpc/FPCSource.git --branch release_3_2_2 $FPCDIR
+     git clone https://github.com/fpc/FPCSource.git --branch $FPC_GIT_TAG $FPCDIR
 # Clone latest lazarus
 RUN mkdir $LAZARUSDIR && \
-     git clone https://gitlab.com/freepascal.org/lazarus/lazarus.git --branch main $LAZARUSDIR
+     git clone https://gitlab.com/freepascal.org/lazarus/lazarus.git --branch $LAZARUS_BRANCH $LAZARUSDIR
 
 # Install latest FPC version that is known to work with building lazarus (or lazbuild).
 RUN mkdir temp && cd temp && \ 
-     wget http://downloads.sourceforge.net/project/lazarus/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.2RC2/fpc-laz_3.2.2-210709_amd64.deb && \
-     dpkg -i /temp/fpc-laz_3.2.2-210709_amd64.deb 
+     wget $FPC_BOOTSTRAP && \
+     dpkg -i `echo $(ls *.deb | head -n1)` 
 
 # make Win64 FPC that is runnable from Linux (but still missing -WG)
 RUN cd $FPCDIR && \
@@ -97,9 +100,10 @@ RUN wget https://packages.lazarus-ide.org/LNet.zip && unzip LNet.zip && rm LNet.
      cd $LAZARUSDIR && ./lazbuild --add-package components/tachart/tachartlazaruspkg.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR
 
 # make some aliases: lazbuildl64 for linux, lazbuildw32 for win32 and lazbuildw64 for win64
-RUN echo "$LAZARUSDIR/lazbuild --os=linux --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR \$*" > /usr/bin/lazbuildl64 && \
+RUN echo "$LAZARUSDIR/lazbuild --os=linux --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcx64 \$*" > /usr/bin/lazbuildl64 && \
      echo "$LAZARUSDIR/lazbuild --os=win32 --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcross386 --widgetset=win32 \$*" > /usr/bin/lazbuildw32 && \
      echo "$LAZARUSDIR/lazbuild --os=win64 --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcrossx64 --widgetset=win32 \$*" > /usr/bin/lazbuildw64 && \
+     echo "printf \"Use lazbuildXX with l64 for Linux and w32,w64 for Windows\n\"" > /usr/bin/lazbuild && \
      chmod 777 /usr/bin/lazbuild*
 
 # CLEANUP
