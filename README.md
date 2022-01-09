@@ -65,9 +65,9 @@ You can run your image, compile your project and receive all your built files wi
 
 ```sh
 rm -rf ./dest_build
-docker run --name <your_docker_conainer_name> <your_image>
-docker cp <your_docker_conainer_name>:/build ./dest_build
-docker container rm <your_docker_conainer_name>
+docker run --name <your_docker_container_name> <your_image>
+docker cp <your_docker_container_name>:/build ./dest_build
+docker container rm <your_docker_container_name>
 ```
 
 ## Adding packages
