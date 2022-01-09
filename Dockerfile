@@ -1,3 +1,5 @@
+# This is a test how to crosscompile to Linux 32bit. But it will not be merged into main!
+
 FROM debian:stretch-20211220-slim
 
 LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild" 
@@ -5,8 +7,6 @@ LABEL version="1.0"
 LABEL author="Christian Wimmer"
 LABEL origin="https://github.com/ChrisWiGit/lazarus-docker"
 LABEL license="MIT"
-
-
 
 # https://wiki.lazarus.freepascal.org/Cross_compiling_for_Windows_under_Linux
 ENV FPC_FULLVERSION=3.2.2
@@ -17,8 +17,8 @@ ARG FPC_GIT_TAG=release_3_2_2
 ARG FPC_BOOTSTRAP=http://downloads.sourceforge.net/project/lazarus/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.2RC2/fpc-laz_3.2.2-210709_amd64.deb
 ARG LAZARUS_BRANCH=main
 
-RUN dpkg --add-architecture i386
 
+RUN dpkg --add-architecture i386
 # Install misc tools for development
 RUN apt-get update && \ 
      apt-get install -y wget binutils gcc unzip git \
@@ -38,7 +38,6 @@ RUN apt install -y \
      libpango1.0-dev:i386 \
      libgtk2.0-dev:i386 \
      libnotify-dev:i386 \
-     # opengl
      libgl1-mesa-dev:i386
 
 # Clone FPC Branch for compiling our own FPC on linux
@@ -64,9 +63,10 @@ RUN cd $FPCDIR && \
 # make Win32 FPC that is runnable from Linux (but still missing -WG)
 RUN cd $FPCDIR && \
      make crossinstall OS_TARGET=win32 CPU_TARGET=i386 INSTALL_PREFIX=$FPCDIR/i386-win32
-# make Linux 32bit     
+
+# This is a test how to use Linux 32bit. But it will not be merged into master!
 RUN cd $FPCDIR && \
-     make crossinstall OS_TARGET=linux CPU_TARGET=i386 INSTALL_PREFIX=$FPCDIR/i386-linux 
+     make crossinstall OS_TARGET=linux CPU_TARGET=i386 INSTALL_PREFIX=$FPCDIR/i386-linux     
 # make Linux FPC - make this last, otherwise units must be recompiled when building lazbuild
 # https://www.getlazarus.org/setup/making/
 RUN cd $FPCDIR && \
@@ -78,9 +78,26 @@ RUN dpkg --remove fpc-laz
 # This will link all compiled units from above into /fpc/units/[i386-win32 | x86_64-linux | x86_64-win64]
 RUN mkdir $FPCDIR/units && \
      ln -sf $FPCDIR/x86_64-linux/lib/fpc/$FPC_FULLVERSION/units/x86_64-linux $FPCDIR/units/x86_64-linux && \
-     ln -sf $FPCDIR/i386-linux/lib/fpc/$FPC_FULLVERSION/units/i386-linux $FPCDIR/units/i386-linux && \
      ln -sf $FPCDIR/x86_64-win64/lib/fpc/$FPC_FULLVERSION/units/x86_64-win64 $FPCDIR/units/x86_64-win64 && \
      ln -sf $FPCDIR/i386-win32/lib/fpc/$FPC_FULLVERSION/units/i386-win32 $FPCDIR/units/i386-win32
+
+
+### TODO
+# ln -sf $FPCDIR/i386-linux/lib/fpc/$FPC_FULLVERSION/units/i386-linux $FPCDIR/units/i386-linux && \	 
+
+# ln -sf $FPCDIR/i386-linux/lib/fpc/$FPC_FULLVERSION/ppcross386 /usr/bin/ppcross386-linux && \
+	 
+# ln -sf /usr/lib/gcc/i686-linux-gnu/6/*.o /usr/lib/i386-linux-gnu/
+# ln -sf /usr/lib/gcc/i686-linux-gnu/6/*.so /usr/lib/i386-linux-gnu/	 
+	 
+	 
+# $LAZARUSDIR/lazbuild --os=linux --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcross386-linux $*
+# ...
+# ld: cannot find /usr/lib/gcc/x86_64-linux-gnu/6/crtbegin.o
+# only way I found was to hack the lib folder of x64 before compiling
+# mv /usr/lib/gcc/x86_64-linux-gnu/6 _6
+# ln -sf /usr/lib/gcc/i686-linux-gnu/6 /usr/lib/gcc/x86_64-linux-gnu/6
+
 
 # Create bin folder and link all binary files of FPC into their specific platform folders /fpc/bin/[i386-win32 | x86_64-linux | x86_64-win64]
 # Also create links of the binaries to /usr/bin/
@@ -91,11 +108,6 @@ RUN mkdir $FPCDIR/bin && \
                ln -sf $FPCDIR/bin/x86_64-linux/ppcx64 /usr/bin/ppcx64 && \
                ln -sf $FPCDIR/bin/x86_64-linux/fpc /usr/bin/fpc && \ 
                ln -sf $FPCDIR/bin/x86_64-linux/fpcmkcfg /usr/bin/fpcmkcfg && \ 
-     mkdir $FPCDIR/bin/i386-linux && \
-          ln -sf $FPCDIR/x86_64-linux/bin/* $FPCDIR/bin/i386-linux/ && \ 
-          ln -sf $FPCDIR/i386-linux/lib/fpc/$FPC_FULLVERSION/ppcross386 $FPCDIR/bin/i386-linux/ppcross386 && \
-               ln -sf $FPCDIR/bin/i386-linux/ppcross386 /usr/bin/ppcross386-linux && \
-               ln -sf $FPCDIR/bin/x86_64-linux/fpcres /usr/bin/i386-linux-fpcres && \
      mkdir $FPCDIR/bin/x86_64-win64 && \
           ln -sf $FPCDIR/x86_64-win64/lib/fpc/$FPC_FULLVERSION/ppcrossx64 $FPCDIR/bin/x86_64-win64/ppcrossx64 && \
                ln -sf $FPCDIR/bin/x86_64-win64/ppcrossx64 /usr/bin/ppcrossx64 && \
@@ -128,12 +140,11 @@ RUN wget https://packages.lazarus-ide.org/LNet.zip && unzip LNet.zip && rm LNet.
 
 # make some aliases: lazbuildl64 for linux, lazbuildw32 for win32 and lazbuildw64 for win64
 RUN echo "$LAZARUSDIR/lazbuild --os=linux --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcx64 \$*" > /usr/bin/lazbuildl64 && \
-     echo "$LAZARUSDIR/lazbuild --os=linux --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcross386-linux \$*" > /usr/bin/lazbuildl32 && \
      echo "$LAZARUSDIR/lazbuild --os=win32 --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcross386 --widgetset=win32 \$*" > /usr/bin/lazbuildw32 && \
      echo "$LAZARUSDIR/lazbuild --os=win64 --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR --compiler=/usr/bin/ppcrossx64 --widgetset=win32 \$*" > /usr/bin/lazbuildw64 && \
-     echo "printf \"Use lazbuildXX with l32,l64 for Linux and w32,w64 for Windows\n\"" > /usr/bin/lazbuild && \
+     echo "printf \"Use lazbuildXX with l64 for Linux and w32,w64 for Windows\n\"" > /usr/bin/lazbuild && \
      chmod 777 /usr/bin/lazbuild*
 
 # CLEANUP
-RUN rm -rf /temp/* && \
+RUN rm /temp/fpc-laz_3.2.2-210709_amd64.deb && \
      rm -rf /var/lib/apt/lists/*
