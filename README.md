@@ -2,7 +2,7 @@
 
 Provides a docker file with built FPC and Lazarus sources from Github.
 
-This docker file build FreePascal and Lazarus from their sources. Freepascal 3.2.2 is compiled from git tag 3.2.2 for Linux 64bit, Windows 32 and 64 bit (crosscompilations). Lazarus (lazbuild) is compiled from git main branch also for Linux 64bit, Windows 32 and 64 bit.
+This docker file builds FreePascal and Lazarus from their sources. Freepascal 3.2.2 is compiled from Git tag 3.2.2 for Linux 64-bit, Windows 32 and 64-bit (cross compilation). Lazarus (lazbuild) is compiled from Git main branch also for Linux 64-bit, Windows 32 and 64-bit.
 
 * FreePascal 3.2.2
 * Lazarus main branch
