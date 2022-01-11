@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "make": "docker build . -t lazarus-base",
-    "it": "docker run -it lazarus-base /bin/bash"
+    "it": "docker run -it lazarus-base /bin/bash",
+    "publish": "docker build . -t lazarus-base && docker tag lazarus-base yourname/lazarus-docker:latest && docker push yourname/lazarus-docker:latest"
   },
   "author": "Christian Wimmer",
   "license": "MIT",
