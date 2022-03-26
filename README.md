@@ -1,3 +1,4 @@
+
 # lazarus-docker
 
 Provides a docker file with built FPC and Lazarus sources from Github.
@@ -9,29 +10,18 @@ This docker file builds FreePascal and Lazarus from their sources. Freepascal 3.
 
 > The dockerfile is available from <https://hub.docker.com/repository/docker/wimmercg/lazarus-docker>
 
-## Building the image
-
-You can use one of the following commands to build the image:
-
-> A package.json is provided for npm or yarn for your convenience
-
-```sh
-docker build . -t lazarus-base
-yarn make
-npm run make
-```
-
-## Run the image with terminal
-
-In this way you can checkout the image first.
-
-```sh
-docker run -it lazarus-base /bin/bash
-yarn it
-npm run it
-```
 
 ## Using the image
+
+You can run the image from your project path and compile your project by mounting the project path into the container.
+To do so, create `runenv.sh` as [shown below](#runenv.sh) into your project folder, so it can be executed in the following way (within your project's path)
+
+`docker run -v $PWD:/project wimmercg/lazarus-docker:1.0.3 /project/runenv.sh`
+
+This docker command directly starts the lazarus-docker image, mounts the current working directory ($PWD) into the docker container as path `/project`, and executes the script `runenv.sh` from your current working directory.
+
+### Using the image from a Dockerfile
+You can use the image as a starting point for your dockerfile. In this example we include `runenv.sh` into the new image file.
 
 ```dockerfile
 FROM wimmercg/lazarus-docker:1.0.3
@@ -41,7 +31,6 @@ COPY runenv.sh /runenv.sh
 RUN chmod 777 /runenv.sh
 CMD /runenv.sh
 ```
-
 For example you can use lazbuild for all OS targets. These are convenient scripts to build.
 
 * `lazbuildl64` for Linux 64bit
@@ -102,6 +91,28 @@ RUN wget https://packages.lazarus-ide.org/LNet.zip && unzip LNet.zip && rm LNet.
 $LAZARUSDIR/lazbuild --os=win64 --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR <lpr file>
 $LAZARUSDIR/lazbuild --os=win32 --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR <lpr file>
 $LAZARUSDIR/lazbuild --os=linux --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR <lpr file>
+```
+
+## Run the image with terminal
+
+In this way you can tryout the image in a termminal first.
+
+```sh
+docker run -it lazarus-base /bin/bash
+yarn it
+npm run it
+```
+
+## Building the image
+
+You can use one of the following commands to build the image:
+
+> A package.json is provided for npm or yarn for your convenience
+
+```sh
+docker build . -t lazarus-base
+yarn make
+npm run make
 ```
 
 ## Documentation
