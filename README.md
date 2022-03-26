@@ -14,7 +14,7 @@ This docker file builds FreePascal and Lazarus from their sources. Freepascal 3.
 ## Using the image
 
 You can run the image from your project path and compile your project by mounting the project path into the container.
-To do so, create `runenv.sh` as [shown below](#runenv.sh) into your project folder, so it can be executed in the following way (within your project's path)
+To do so, create `runenv.sh` as [shown below](#runenvsh) into your project folder, so it can be executed in the following way (within your project's path)
 
 `docker run -v $PWD:/project wimmercg/lazarus-docker:1.0.3 /project/runenv.sh`
 
