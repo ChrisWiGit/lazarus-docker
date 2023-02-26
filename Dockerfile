@@ -1,17 +1,21 @@
 FROM debian:11.6-slim
 
-LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild. Debian 11.6 slim (bullseye)" 
-LABEL version="1.0.4-d116slim"
+LABEL name="FCP Source on main branch and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild. Debian 11.6 slim (bullseye)" 
+LABEL version="1.0.4-d116slim_fpcmain"
 LABEL author="Christian Wimmer"
 LABEL origin="https://github.com/ChrisWiGit/lazarus-docker"
 LABEL license="MIT"
 
 # https://wiki.lazarus.freepascal.org/Cross_compiling_for_Windows_under_Linux
-ENV FPC_FULLVERSION=3.2.2
+# ENV FPC_FULLVERSION=3.2.2
+# using main branch of fpc
+ENV FPC_FULLVERSION=3.3.1
 ENV LAZARUSDIR=/lazarus
 ENV FPCDIR=/fpc
 
-ARG FPC_GIT_TAG=release_3_2_2
+# ARG FPC_GIT_TAG=release_3_2_2
+# For using main branch, set FPC_FULLVERSION to 3.3.1 (this version ist set in make.fpc under [fpc]version)
+ARG FPC_GIT_TAG=main
 ARG FPC_BOOTSTRAP=http://downloads.sourceforge.net/project/lazarus/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.2RC2/fpc-laz_3.2.2-210709_amd64.deb
 ARG LAZARUS_BRANCH=main
 # Install misc tools for development
