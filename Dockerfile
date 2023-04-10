@@ -1,4 +1,4 @@
-FROM debian:stable-20230320-slim
+FROM debian:11-slim
 
 LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild" 
 LABEL version="1.1.0"
