@@ -1,7 +1,7 @@
-FROM debian:11.6-slim
+FROM debian:11-slim
 
-LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild. Debian 11.6 slim (bullseye)" 
-LABEL version="1.0.4-d116slim"
+LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild. Debian 11 slim (bullseye)" 
+LABEL version="1.1.0"
 LABEL author="Christian Wimmer"
 LABEL origin="https://github.com/ChrisWiGit/lazarus-docker"
 LABEL license="MIT"
@@ -17,11 +17,11 @@ ARG LAZARUS_BRANCH=main
 # Install misc tools for development
 RUN apt-get update && \ 
      apt-get install -y wget binutils gcc unzip git \
-          # used for opengl lazopenglcontext
-          libgl1-mesa-dev libgtk2.0-0 libgtk2.0-dev 
-          # \
-          # for docker image development
-          # psmisc mc
+     # used for opengl lazopenglcontext
+     libgl1-mesa-dev libgtk2.0-0 libgtk2.0-dev 
+# \
+# for docker image development
+# psmisc mc
 
 # Clone FPC Branch for compiling our own FPC on linux
 # Our plan would be to create a cross platform compiler ppcrossx64 (win64) and ppcross386 (win32) but 
@@ -64,21 +64,21 @@ RUN mkdir $FPCDIR/units && \
 # Also create links of the binaries to /usr/bin/
 RUN mkdir $FPCDIR/bin && \
      mkdir $FPCDIR/bin/x86_64-linux && \
-          ln -sf $FPCDIR/x86_64-linux/bin/* $FPCDIR/bin/x86_64-linux/ && \ 
-          ln -sf $FPCDIR/x86_64-linux/lib/fpc/$FPC_FULLVERSION/ppcx64 $FPCDIR/bin/x86_64-linux/ppcx64 && \
-               ln -sf $FPCDIR/bin/x86_64-linux/ppcx64 /usr/bin/ppcx64 && \
-               ln -sf $FPCDIR/bin/x86_64-linux/fpc /usr/bin/fpc && \ 
-               ln -sf $FPCDIR/bin/x86_64-linux/fpcmkcfg /usr/bin/fpcmkcfg && \ 
+     ln -sf $FPCDIR/x86_64-linux/bin/* $FPCDIR/bin/x86_64-linux/ && \ 
+     ln -sf $FPCDIR/x86_64-linux/lib/fpc/$FPC_FULLVERSION/ppcx64 $FPCDIR/bin/x86_64-linux/ppcx64 && \
+     ln -sf $FPCDIR/bin/x86_64-linux/ppcx64 /usr/bin/ppcx64 && \
+     ln -sf $FPCDIR/bin/x86_64-linux/fpc /usr/bin/fpc && \ 
+     ln -sf $FPCDIR/bin/x86_64-linux/fpcmkcfg /usr/bin/fpcmkcfg && \ 
      mkdir $FPCDIR/bin/x86_64-win64 && \
-          ln -sf $FPCDIR/x86_64-win64/lib/fpc/$FPC_FULLVERSION/ppcrossx64 $FPCDIR/bin/x86_64-win64/ppcrossx64 && \
-               ln -sf $FPCDIR/bin/x86_64-win64/ppcrossx64 /usr/bin/ppcrossx64 && \
-               # the res compiler of linux can be used for win64
-               ln -sf $FPCDIR/bin/x86_64-linux/fpcres /usr/bin/x86_64-win64-fpcres && \
+     ln -sf $FPCDIR/x86_64-win64/lib/fpc/$FPC_FULLVERSION/ppcrossx64 $FPCDIR/bin/x86_64-win64/ppcrossx64 && \
+     ln -sf $FPCDIR/bin/x86_64-win64/ppcrossx64 /usr/bin/ppcrossx64 && \
+     # the res compiler of linux can be used for win64
+     ln -sf $FPCDIR/bin/x86_64-linux/fpcres /usr/bin/x86_64-win64-fpcres && \
      mkdir $FPCDIR/bin/i386-win32 && \ 
-          ln -sf $FPCDIR/i386-win32/lib/fpc/$FPC_FULLVERSION/ppcross386 $FPCDIR/bin/i386-win32/ppcross386 && \
-               ln -sf $FPCDIR/bin/i386-win32/ppcross386 /usr/bin/ppcross386 && \
-               # the res compiler of linux can be used for win32
-               ln -sf $FPCDIR/bin/x86_64-linux/fpcres /usr/bin/i386-win32-fpcres
+     ln -sf $FPCDIR/i386-win32/lib/fpc/$FPC_FULLVERSION/ppcross386 $FPCDIR/bin/i386-win32/ppcross386 && \
+     ln -sf $FPCDIR/bin/i386-win32/ppcross386 /usr/bin/ppcross386 && \
+     # the res compiler of linux can be used for win32
+     ln -sf $FPCDIR/bin/x86_64-linux/fpcres /usr/bin/i386-win32-fpcres
 
 # Set unit path relative to /fpc and make it globally known to future fpc calls
 RUN fpcmkcfg -d basepath=$FPCDIR -o /etc/fpc.cfg    
@@ -94,9 +94,18 @@ RUN cd $LAZARUSDIR && \
 
 # # add here additional libraries to be used
 # # We don't --buid-ide= because this is not necessary for just compiling, and Lazarus compiles with parameter -WG that is not supported with cross compiler (BUG?)
-RUN wget https://packages.lazarus-ide.org/LNet.zip && unzip LNet.zip && rm LNet.zip && \
-     cd $LAZARUSDIR && ./lazbuild --add-package ../../lnet/lazaruspackage/lnetvisual.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR && \
-     cd $LAZARUSDIR && ./lazbuild --add-package components/opengl/lazopenglcontext.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR && \
+
+# Use improved forked version of LNET
+RUN  echo "git clone https://github.com/PascalCorpsman/lnet.git /lnet && \
+     cd $LAZARUSDIR && ./lazbuild --add-package /lnet/lazaruspackage/lnetvisual.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR" > /install_corpsman_lnet.sh
+
+# Original Version of LNET
+RUN  echo "wget https://packages.lazarus-ide.org/LNet.zip && unzip LNet.zip && rm LNet.zip && \
+     cd $LAZARUSDIR && ./lazbuild --add-package ../../lnet/lazaruspackage/lnetvisual.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR" > /install_original_lnet.sh
+
+RUN chmod o+x /install_*_lnet.sh
+
+RUN  cd $LAZARUSDIR && ./lazbuild --add-package components/opengl/lazopenglcontext.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR && \
      cd $LAZARUSDIR && ./lazbuild --add-package components/tachart/tachartlazaruspkg.lpk --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR
 
 # make some aliases: lazbuildl64 for linux, lazbuildw32 for win32 and lazbuildw64 for win64

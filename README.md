@@ -92,7 +92,6 @@ $LAZARUSDIR/lazbuild --os=win64 --cpu=x86_64 --primary-config-path=$LAZARUSDIR -
 $LAZARUSDIR/lazbuild --os=win32 --cpu=i386 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR <lpr file>
 $LAZARUSDIR/lazbuild --os=linux --cpu=x86_64 --primary-config-path=$LAZARUSDIR --lazarusdir=$LAZARUSDIR <lpr file>
 ```
-
 ## Run the image with terminal
 
 In this way you can tryout the image in a termminal first.
@@ -102,7 +101,6 @@ docker run -it lazarus-base /bin/bash
 yarn it
 npm run it
 ```
-
 ## Building the image
 
 You can use one of the following commands to build the image:
@@ -114,6 +112,21 @@ docker build . -t lazarus-base
 yarn make
 npm run make
 ```
+## LNET package (network package)
+
+By default LNET will not be installed anymore. Instead you must install your own LNET version or call
+ 
+ * `/install_corpsman_lnet.sh` - Installs Corpsman's version of LNET. [See his gihub repository](https://github.com/PascalCorpsman/lnet).
+ * `/install_original_lnet.sh` - Install [official version](https://packages.lazarus-ide.org/LNet.zip) of LNET.
+
+
+## Changes
+
+* 1.0.x
+  * Using `debian:stretch-20211220-slim`
+* 1.1.0
+  * Using `debian:11.6-slim`
+  * The LNET package has been removed from being installed by default. Instead an user of this image must call either the script `/install_corpsman_lnet.sh` or `/install_original_lnet.sh` to install different versions on her own. Corpsman version has some fixes that are not available in the default version, mainly NO_DELAY for TCP is enabled (improves performance).
 
 ## Documentation
 
