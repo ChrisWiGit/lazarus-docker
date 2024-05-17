@@ -1,7 +1,7 @@
-FROM debian:11-slim
+FROM debian:12-slim
 
-LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild. Debian 11 slim (bullseye)" 
-LABEL version="1.1.0"
+LABEL name="FCP Source and Lazarus Git main, Linux64 and Win32, Win64 crosscompile with lazbuild. Debian 12 slim (bookworm)" 
+LABEL version="1.2.0"
 LABEL author="Christian Wimmer"
 LABEL origin="https://github.com/ChrisWiGit/lazarus-docker"
 LABEL license="MIT"
